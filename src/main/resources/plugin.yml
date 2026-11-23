@@ -1,0 +1,32 @@
+name: EconomyLogger
+version: '${project.version}'
+main: dev.xenos.economylogger.EconomyLoggerPlugin
+api-version: '1.21'
+folia-supported: true
+load: STARTUP
+author: Xenos
+description: Logs every Vault economy transaction, which plugin made it, who paid who, and what items came with it.
+depend: [Vault]
+softdepend: [Essentials]
+commands:
+  ecolog:
+    description: Open the economy log
+    usage: /ecolog [player]
+    aliases: [elog, economylog]
+permissions:
+  economylogger.use:
+    description: View your own economy log
+    default: true
+  economylogger.others:
+    description: View other players' economy logs
+    default: op
+  economylogger.lookup:
+    description: Text lookups from chat or console
+    default: op
+  economylogger.admin:
+    description: Reload and stats
+    default: op
+    children:
+      economylogger.others: true
+      economylogger.lookup: true
+      economylogger.use: true
