@@ -1,69 +1,109 @@
-# ─────────────────────────────────────────────
-#  EconomyLogger  ·  config.yml
-#  Watches every Vault economy call and records
-#  who got money, from where, and what came with it.
-# ─────────────────────────────────────────────
+# EconomyLogger config
+#
+# Hey! Thanks for using EconomyLogger.
+# The defaults are fine for most servers, so you can leave this file alone
+# and it'll just work. If you do change something, run /ecolog reload after.
 
 hook:
-  # Put a transparent recorder in front of your economy plugin (Essentials, CMI, etc).
-  # Every plugin that asks Vault for the economy talks through it, so nothing is missed.
+  # This is the main switch. When it's on, EconomyLogger sits in front of your
+  # economy plugin (Essentials, CMI, whatever you run) and sees every payment
+  # that goes through Vault. Turn it off and almost nothing gets logged.
   enabled: true
-  # Also log calls that failed (not enough money, account missing...).
+
+  # Should we also log payments that didn't go through? Like when someone tries
+  # to buy something without enough money. Most people don't care, so it's off.
   log-failed: false
 
 tracking:
-  # Transactions smaller than this are ignored (0 = log everything).
+  # Skip anything smaller than this. Handy if you have a plugin that pays out
+  # tiny amounts all day. Leave it at 0 to log everything.
   min-amount: 0.0
-  # Plugin names whose money calls are never logged (case-insensitive).
+
+  # Plugins you don't want in the log at all. Names aren't case sensitive.
+  # Example: [Jobs, AFKRewards]
   ignored-plugins: []
-  # Player names that are never logged (e.g. bank / NPC accounts).
+
+  # Players you don't want in the log, like a server bank or NPC accounts.
   ignored-players: []
-  # How a payment between two players is detected: a withdraw from player Y followed by
-  # a deposit to player X, by the same plugin, on the same thread, within this window.
+
+  # This is how we figure out that one player paid another.
+  # If a plugin takes money from Alex and gives money to Steve right after,
+  # we link the two and show "Alex paid Steve".
   pairing:
     enabled: true
+    # How close together the two halves have to be, in milliseconds.
+    # 100 is plenty. You really shouldn't need to touch this.
     window-ms: 100
-    # smaller / larger amount must be at least this ratio (allows auction tax, fees).
+    # Auction houses usually take a cut, so Steve gets a bit less than Alex paid.
+    # 0.5 means we still link them as long as Steve got at least half.
     min-ratio: 0.5
-  # Remember what the player was doing right before the payment.
+
+  # Saves what the player was doing right before the money moved,
+  # so you see stuff like "/ah sell 500" or "menu: Auction House" in the log.
   context:
-    commands: true        # "/ah sell 500"
-    menus: true           # "menu: Auction House"
-    console: true         # "console: /eco give Steve 100"
+    commands: true
+    menus: true
+    # Also catches console commands, like "/eco give Steve 100".
+    console: true
     window-ms: 100
+    # Long commands get cut off at this many characters.
     max-length: 64
 
 items:
-  # Snapshot the inventory when money moves and diff it a moment later,
-  # so you see "-$500 → +16x Diamond" for auction house / shop purchases.
+  # The fun part. When money moves, we take a quick look at the player's
+  # inventory and check again a moment later. Whatever showed up or went
+  # missing gets saved with the payment, so you'll see things like
+  # "-$500, got 16 Diamonds" for auction house buys.
   enabled: true
+
+  # How many ticks to wait before checking again. 2 is usually enough.
+  # If some plugin gives items a little late and they don't show up, bump this up.
   delay-ticks: 2
-  # Do not track items for these plugins (e.g. jobs plugins that pay every block).
+
+  # Plugins that pay a lot but never give items (jobs plugins, for example).
+  # Adding them here saves a bit of work.
   ignored-plugins: []
-  # Max distinct item stacks saved per transaction.
+
+  # Max number of different item stacks saved for one payment.
   max-per-transaction: 27
 
 essentials:
-  # Log Essentials' own /pay, /eco and /sell (they do not go through Vault).
+  # Essentials does /pay, /eco and /sell on its own, without Vault,
+  # so we listen to it separately. Don't worry, nothing gets logged twice.
   enabled: true
+  # Which kinds of Essentials balance changes to log. The defaults cover all of them.
   causes: [COMMAND_PAY, COMMAND_ECO, COMMAND_SELL, SPECIAL, UNKNOWN, API]
 
 storage:
+  # Everything goes in this file inside the plugin folder.
   file: transactions.db
-  # Writes happen on a separate thread in batches, never on a server tick.
+
+  # We save in batches on a separate thread, so your server never waits on the disk.
+  # These two control how big a batch is and how often it's saved.
+  # The defaults are good even for really busy servers.
   batch-size: 500
   flush-interval-ms: 1000
-  # Hard cap for pending writes kept in memory (protects RAM if the disk stalls).
+
+  # Safety net. If the disk ever gets stuck, we keep at most this many
+  # unsaved records in memory before we start dropping new ones.
   queue-limit: 200000
-  # Delete records older than this many days (0 = keep forever).
+
+  # Records older than this many days are cleaned up automatically.
+  # Set it to 0 if you want to keep everything forever (the file will keep growing though).
   retention-days: 90
 
 format:
+  # How money looks in the menu and in chat.
   currency-prefix: "$"
   currency-suffix: ""
   decimals: 2
-  # Use your economy plugin's own format() instead of the settings above.
+
+  # Set this to true if you'd rather use your economy plugin's own formatting.
   use-economy-format: false
+
+  # Date format. If you've used Java date formats before, it's the same thing.
   date: "yyyy-MM-dd HH:mm"
-  # Empty = server time zone. Example: "Asia/Tehran"
+
+  # Leave it empty to use the server's time zone,
+  # or put your own, like "Asia/Tehran" or "Europe/London".
   timezone: ""

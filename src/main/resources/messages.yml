@@ -1,22 +1,33 @@
-# MiniMessage format. Theme tags: <g>...</g> main gradient, <g2>...</g2> accent gradient,
-# <in> income color, <out> spend color, <muted> grey-green, <text> light text.
+# EconomyLogger messages
+#
+# Every chat message the plugin sends. They use MiniMessage, plus the same
+# shortcuts as gui.yml: <g>, <g2>, <in>, <out>, <muted> and <text>.
+# Anything in {curly brackets} gets filled in for you, so keep those as they are.
+
+# Goes in front of most messages.
 prefix: "<g><b>EcoLog</b></g> <dark_gray>»</dark_gray> "
 no-permission: "<out>You don't have permission to do that."
 players-only: "<out>Only players can open the menu. Use <text>/ecolog lookup <player></text>."
 player-not-found: "<out>No records for <text>{player}</text>."
 loading: "<muted>Loading..."
 reloaded: "<in>Configuration reloaded."
+
+# What you see with /ecolog lookup.
 lookup-header: "<g><b>{player}</b></g> <muted>· page {page} · {total} records"
 lookup-line: "<muted>{date}</muted> {amount} <muted>via</muted> <text>{plugin}</text>{counter}{items}"
 lookup-counter-in: " <muted>from</muted> <text>{name}</text>"
 lookup-counter-out: " <muted>to</muted> <text>{name}</text>"
 lookup-items: " <g2>[{count} items]</g2>"
 lookup-empty: "<muted>Nothing logged yet."
+
+# /ecolog stats. If "dropped" is ever above 0, your disk couldn't keep up.
 stats:
   - "<g><b>EconomyLogger</b></g> <muted>v{version}"
   - "<muted>Economy: <text>{economy}</text> <muted>· hook: {hook}"
   - "<muted>Logged this session: <text>{logged}</text> <muted>· queued: <text>{queued}</text> <muted>· dropped: <text>{dropped}</text>"
   - "<muted>Database: <text>{rows}</text> <muted>records · <text>{size}</text>"
+
+# Shown when someone types the command wrong.
 usage:
   - "<g><b>EconomyLogger</b></g>"
   - "<text>/ecolog</text> <muted>open your log"

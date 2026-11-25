@@ -1,11 +1,20 @@
-# ─────────────────────────────────────────────
-#  EconomyLogger  ·  gui.yml
-#  Every color, name, lore line, material and slot is here.
-#  Text uses MiniMessage. Theme tags you can use anywhere:
-#    <g>..</g>  main gradient     <g2>..</g2>  accent gradient
-#    <in> income   <out> spending   <muted> soft grey-green   <text> light text
-# ─────────────────────────────────────────────
+# EconomyLogger menus
+#
+# Everything you see in the menus lives here: colors, names, lore, items and slots.
+# Text uses MiniMessage, so <b>, <red>, <gradient> and all that work.
+#
+# We also added a few shortcuts you can use anywhere in this file:
+#   <g>text</g>    the main green gradient
+#   <g2>text</g2>  the accent gradient
+#   <in>   color for money coming in
+#   <out>  color for money going out
+#   <muted>  soft grey green, for the less important stuff
+#   <text>   light text
+#
+# Want a different look? Just change the colors under "theme" and the whole
+# plugin follows. Run /ecolog reload when you're done.
 
+# The colors behind the shortcuts above.
 theme:
   gradient: ["#B6FFCF", "#3DDC84", "#0FA958"]
   accent: ["#E3FF8A", "#7BE495"]
@@ -14,6 +23,7 @@ theme:
   muted: "#8BA698"
   text: "#EAFBF1"
 
+# Little sounds when you open menus and click around. Set enabled to false if you don't like them.
 sounds:
   enabled: true
   open: "block.amethyst_block.chime"
@@ -22,15 +32,17 @@ sounds:
   volume: 0.6
   pitch: 1.4
 
+# The main menu you get with /ecolog.
 log-menu:
   title: "<g><b>Economy Log</b></g> <dark_gray>· <text>{player}"
   rows: 6
-  # Inventory slots used for entries, in order.
+  # Which slots show the payments, in order. Each page fills these up.
   entry-slots: [10,11,12,13,14,15,16,19,20,21,22,23,24,25,28,29,30,31,32,33,34,37,38,39,40,41,42,43]
   border:
     enabled: true
-    # Alternating panes give the border a soft gradient look.
+    # The border switches between these two, which gives it a nice gradient feel.
     materials: [LIME_STAINED_GLASS_PANE, GREEN_STAINED_GLASS_PANE]
+  # The player head at the top with their totals.
   summary:
     slot: 4
     name: "<g><b>{player}</b></g>"
@@ -67,18 +79,22 @@ log-menu:
       material: KNOWLEDGE_BOOK
       name: "<g><b>Where money comes from</b></g>"
       lore: ["<muted>Totals per plugin and", "<muted>the players you trade with most.", "", "<muted>Click to open"]
+  # How the options look in the Filter and Period buttons.
   option-selected: "<g2>» {option}</g2>"
   option-other: "<muted>  {option}"
+  # Shown when there's nothing to list.
   empty:
     slot: 22
     material: LIGHT_GRAY_STAINED_GLASS_PANE
     name: "<muted>Nothing here yet"
     lore: ["<muted>Try another filter or period."]
 
+# How each payment looks in the log.
 entry:
   name-income: "<in><b>+ {amount}</b>"
   name-spend: "<out><b>- {amount}</b>"
-  # A line is hidden automatically when one of its {placeholders} is empty.
+  # Don't worry about empty lines. If a payment has no "From" or no "World",
+  # that line just won't show up.
   lore:
     - "<muted>Source   <text>{plugin}"
     - "<muted>From     <text>{from}"
@@ -91,16 +107,21 @@ entry:
   item-received: " <in>+ {amount}x <text>{item}"
   item-removed: " <out>- {amount}x <text>{item}"
   items-more: " <muted>... and {more} more"
+  # How many items to list right on the entry before it says "and X more".
   items-preview: 4
   items-footer: ["", "<g2>Click to inspect the items</g2>"]
-  # Icons. Order: received item > player head (payments) > plugin icon > default.
+  # Which icon each entry gets. We go down this list and use the first one that fits:
+  # the item they got, then the other player's head, then the plugin's icon,
+  # then the plain income or spend material.
   show-received-item: true
   transfer-uses-head: true
   income-material: EMERALD
   spend-material: REDSTONE
+  # Give your plugins their own icon. Use the plugin name exactly as it shows in /plugins.
   plugin-icons:
     Essentials: GOLD_INGOT
 
+# Opens when you click a payment that came with items.
 items-menu:
   title: "<g><b>Items</b></g> <dark_gray>· <text>{amount}"
   rows: 6
@@ -108,6 +129,8 @@ items-menu:
   removed-lore: ["", "<out>▼ Removed <text>{amount}x"]
   back: { slot: 49, material: SPECTRAL_ARROW, name: "<g>← Back</g>", lore: [] }
 
+# The "Where money comes from" page. Shows totals per plugin
+# on the left and the players they trade with most on the right.
 sources-menu:
   title: "<g><b>Money sources</b></g> <dark_gray>· <text>{player}"
   rows: 6
@@ -130,6 +153,7 @@ sources-menu:
     - "<g2>◆ Net       </g2><text>{net}"
   back: { slot: 49, material: SPECTRAL_ARROW, name: "<g>← Back</g>", lore: [] }
 
+# Words used across the menus. Translate them if your server isn't in English.
 labels:
   types: { ALL: "Everything", INCOME: "Money in", SPEND: "Money out", PAYMENTS: "Player payments", ITEMS: "With items" }
   periods: { DAY: "Last 24 hours", WEEK: "Last 7 days", MONTH: "Last 30 days", ALL: "All time" }
