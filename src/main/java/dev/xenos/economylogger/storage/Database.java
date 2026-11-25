@@ -10,10 +10,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- * SQLite storage. All writes go through one background thread in batched transactions;
- * reads run on a second connection on their own thread. Nothing here ever runs on a tick thread.
- */
 public final class Database {
 
     private sealed interface Op permits Insert, Link, Items {}
@@ -102,8 +98,6 @@ public final class Database {
         }
     }
 
-    // ───────────── writer ─────────────
-
     private void writeLoop() {
         List<Op> batch = new ArrayList<>(batchSize);
         while (running || !queue.isEmpty()) {
@@ -160,7 +154,6 @@ public final class Database {
                         inserts++;
                     }
                     case Link l -> {
-                        // inserts queued before this link must exist first
                         if (inserts > 0) { ins.executeBatch(); inserts = 0; }
                         link.setString(1, l.counter() == null ? null : l.counter().toString());
                         link.setString(2, l.counterName());
@@ -214,8 +207,6 @@ public final class Database {
         try { if (writeConn != null) writeConn.close(); } catch (SQLException ignored) { }
         try { if (readConn != null) readConn.close(); } catch (SQLException ignored) { }
     }
-
-    // ───────────── reads (async) ─────────────
 
     public <T> CompletableFuture<T> read(SqlTask<T> task) {
         return CompletableFuture.supplyAsync(() -> {
@@ -343,7 +334,6 @@ public final class Database {
         });
     }
 
-    /** Finds a logged player's uuid and last known name. */
     public CompletableFuture<Map.Entry<UUID, String>> findPlayer(String name) {
         return read(c -> {
             try (PreparedStatement ps = c.prepareStatement(

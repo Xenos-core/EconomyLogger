@@ -17,11 +17,6 @@ import java.math.BigDecimal;
 import java.util.Locale;
 import java.util.logging.Level;
 
-/**
- * Essentials changes balances for /pay, /eco and /sell without going through Vault.
- * Its UserBalanceUpdateEvent is read here (no compile dependency on Essentials).
- * Changes that came through our Vault recorder are skipped so nothing is logged twice.
- */
 public final class EssentialsHook implements Listener {
 
     private static final String EVENT = "net.ess3.api.events.UserBalanceUpdateEvent";
@@ -66,7 +61,7 @@ public final class EssentialsHook implements Listener {
     }
 
     private void handle(Event e) {
-        if (TrackedEconomy.inTrackedCall()) return; // already recorded by the Vault recorder
+        if (TrackedEconomy.inTrackedCall()) return;
         try {
             String cause = String.valueOf(getCause.invoke(e)).toUpperCase(Locale.ROOT);
             if (!plugin.settings().essentialsCauses().contains(cause)) return;
@@ -84,7 +79,6 @@ public final class EssentialsHook implements Listener {
                 default -> null;
             };
             if (cause.equals("API")) {
-                // Some plugin used Essentials' own API directly, find out which one.
                 String caller = recorder.caller("Essentials");
                 if (caller != null) source = caller;
             }

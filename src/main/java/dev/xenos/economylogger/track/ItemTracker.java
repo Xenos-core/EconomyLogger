@@ -14,11 +14,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * When money moves for an online player, copy their inventory and compare it a couple of ticks later.
- * Whatever appeared or disappeared is attached to that transaction (auction buys, shop sells...).
- * Runs on the player's own region thread (Folia safe); one session per player at a time.
- */
 public final class ItemTracker {
 
     private static final class Session {
@@ -37,10 +32,9 @@ public final class ItemTracker {
     public void track(long txId, Player player, String source) {
         var s = plugin.settings();
         if (!s.items() || s.itemsIgnored(source) || !player.isOnline()) return;
-        // We may only touch the inventory from the thread that owns the player.
         if (!Bukkit.isOwnedByCurrentRegion(player)) return;
         UUID id = player.getUniqueId();
-        if (sessions.containsKey(id)) return; // another payment this tick already watches this inventory
+        if (sessions.containsKey(id)) return;
         Session session = new Session(txId, copy(player.getInventory().getContents()));
         if (sessions.putIfAbsent(id, session) != null) return;
         var task = player.getScheduler().runDelayed(plugin, t -> finish(player, session),

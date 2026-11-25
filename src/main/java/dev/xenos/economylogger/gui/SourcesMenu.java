@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/** Where the money comes from: totals per plugin and top trading partners. */
 public final class SourcesMenu extends Menu {
 
     private final LogMenu back;

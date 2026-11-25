@@ -14,11 +14,6 @@ import org.bukkit.plugin.ServicePriority;
 
 import java.util.logging.Level;
 
-/**
- * Registers {@link TrackedEconomy} at the highest priority as soon as the server starts, so every plugin
- * that asks Vault for an economy gets the recorder. The real economy is found lazily and follows
- * any later (un)registration.
- */
 public final class EconomyHook implements Listener {
 
     private final EconomyLoggerPlugin plugin;
@@ -46,7 +41,6 @@ public final class EconomyHook implements Listener {
 
     public boolean active() { return active; }
 
-    /** The real economy plugin's provider (never our own wrapper). */
     public Economy delegate() {
         Economy d = delegate;
         if (d == null && !resolved) d = resolve();
@@ -66,7 +60,6 @@ public final class EconomyHook implements Listener {
         return found;
     }
 
-    /** Whether other plugins currently receive our recorder when they ask Vault for an economy. */
     public String status() {
         if (!active) return "disabled";
         RegisteredServiceProvider<Economy> top = Bukkit.getServicesManager().getRegistration(Economy.class);

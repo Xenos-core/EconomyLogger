@@ -14,7 +14,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.*;
 
-/** gui.yml, plus helpers that turn its sections into items. */
 public final class Gui {
 
     public final YamlConfiguration cfg;
@@ -54,7 +53,6 @@ public final class Gui {
 
     public String label(String path, String def) { return str("labels." + path, def); }
 
-    /** A button defined by a section with slot/material/name/lore. */
     public ItemStack button(String path, Material def, Map<String, String> ph) {
         return item(material(path + ".material", def), str(path + ".name", ""), list(path + ".lore"), ph);
     }
@@ -100,7 +98,6 @@ public final class Gui {
         } catch (Throwable ignored) { }
     }
 
-    /** Renders an option list like "» Everything / Money in / ..." for a cycling button. */
     public String options(List<String> names, int selected) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < names.size(); i++) {
@@ -111,7 +108,6 @@ public final class Gui {
         return sb.toString();
     }
 
-    /** Lore list where a line may expand to several (used for option lists). */
     public List<String> expand(List<String> lines, String key, String multi) {
         List<String> out = new ArrayList<>();
         for (String l : lines) {

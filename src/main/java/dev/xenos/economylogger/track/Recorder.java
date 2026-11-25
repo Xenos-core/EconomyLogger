@@ -10,10 +10,6 @@ import org.bukkit.entity.Player;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 
-/**
- * Turns economy calls into records. Called from any thread; does only cheap in-memory work
- * and hands the record to the database writer queue.
- */
 public final class Recorder {
 
     private static final class Last {
@@ -68,7 +64,6 @@ public final class Recorder {
         TxRecord r = new TxRecord(plugin.database().nextId(), System.currentTimeMillis(), uuid, name, kind,
                 amount, balance, success, source, null, world);
 
-        // Pair with the opposite side made by the same plugin a moment ago on this thread: Y paid X.
         TxRecord other = null;
         if (success && s.pairing()) {
             Last l = last.get();

@@ -12,7 +12,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/** MiniMessage with the plugin's theme tags and {placeholder} support. */
 public final class Text {
 
     private static final MiniMessage MM = MiniMessage.miniMessage();
@@ -56,7 +55,6 @@ public final class Text {
                 .replace("<text>", "<color:" + text + ">").replace("</text>", "</color>");
     }
 
-    /** Replaces {placeholders}; values are inserted raw (callers escape untrusted text with {@link #esc}). */
     public static String fill(String s, Map<String, String> ph) {
         if (ph == null || ph.isEmpty() || s.indexOf('{') < 0) return s;
         Matcher m = PH.matcher(s);
@@ -73,12 +71,10 @@ public final class Text {
         return MM.deserialize(theme(fill(s, ph)));
     }
 
-    /** For item names and lore: no default italics. */
     public Component item(String s, Map<String, String> ph) {
         return parse(s, ph).decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE);
     }
 
-    /** Lore lines; a line whose placeholder has an empty value is dropped. */
     public List<Component> lore(List<String> lines, Map<String, String> ph) {
         List<Component> out = new ArrayList<>(lines.size());
         for (String line : lines) {

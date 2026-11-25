@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-/** Snapshot of config.yml values read on hot paths. Replaced as a whole on reload. */
 public record Settings(
         boolean logFailed, double minAmount, Set<String> ignoredPlugins, Set<String> ignoredPlayers,
         boolean pairing, long pairingWindowNanos, double pairingMinRatio,

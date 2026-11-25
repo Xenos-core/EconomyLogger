@@ -2,7 +2,6 @@ package dev.xenos.economylogger.model;
 
 import java.util.UUID;
 
-/** One balance change of one player. Immutable after it is queued, except the link fields set before queueing. */
 public final class TxRecord {
     public static final byte IN = 0;
     public static final byte OUT = 1;

@@ -106,7 +106,6 @@ public final class EconomyLoggerPlugin extends JavaPlugin implements Listener {
         formats = new Formats(getConfig(), guiCfg.getConfigurationSection("labels.ago"), () -> hook == null ? null : hook.delegate());
     }
 
-    /** Loads a file from the data folder; missing keys fall back to the bundled defaults. */
     private YamlConfiguration load(String name) {
         File f = new File(getDataFolder(), name);
         if (!f.exists()) saveResource(name, false);

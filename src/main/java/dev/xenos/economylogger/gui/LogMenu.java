@@ -14,7 +14,6 @@ import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.*;
 
-/** The main log: summary head, a page of transactions, filters and paging. */
 public final class LogMenu extends Menu {
 
     final UUID target;
@@ -59,7 +58,6 @@ public final class LogMenu extends Menu {
         busy = true;
         OfflinePlayer off = Bukkit.getOfflinePlayer(target);
         plugin.database().page(query).thenApply(p -> {
-            // balance read off-thread so a slow economy never stalls the tick
             double bal = Double.NaN;
             try {
                 var eco = plugin.hook().delegate();
@@ -89,7 +87,6 @@ public final class LogMenu extends Menu {
         bySlot.clear();
         border("log-menu.border");
 
-        // summary
         Summary s = page.summary();
         Map<String, String> ph = new HashMap<>();
         ph.put("player", Text.esc(targetName));
@@ -102,7 +99,6 @@ public final class LogMenu extends Menu {
         ItemStack head = head(target, g.str("log-menu.summary.name", ""), g.list("log-menu.summary.lore"), ph);
         set(g.slot("log-menu.summary", 4), head);
 
-        // entries
         List<Integer> slots = g.slots("log-menu.entry-slots");
         List<LogEntry> entries = page.entries();
         for (int i = 0; i < entries.size() && i < slots.size(); i++) {
@@ -114,7 +110,6 @@ public final class LogMenu extends Menu {
             set(g.slot("log-menu.empty", 22), g.button("log-menu.empty", Material.LIGHT_GRAY_STAINED_GLASS_PANE, Map.of()));
         }
 
-        // buttons
         Map<String, String> pg = Map.of("page", Integer.toString(query.page() + 1), "pages", Integer.toString(page.pages()));
         if (query.page() > 0) set(g.slot("log-menu.buttons.previous", 45), g.button("log-menu.buttons.previous", Material.ARROW, pg));
         if (query.page() + 1 < page.pages()) set(g.slot("log-menu.buttons.next", 53), g.button("log-menu.buttons.next", Material.ARROW, pg));

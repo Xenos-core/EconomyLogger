@@ -7,13 +7,8 @@ import org.bukkit.OfflinePlayer;
 
 import java.util.List;
 
-/**
- * A transparent Economy that forwards every call to the real economy plugin and records
- * deposits and withdrawals on the way back. Read-only calls are passed straight through.
- */
 public final class TrackedEconomy implements Economy {
 
-    /** > 0 while this thread is inside a tracked deposit/withdraw (lets the Essentials hook skip duplicates). */
     public static final ThreadLocal<int[]> DEPTH = ThreadLocal.withInitial(() -> new int[1]);
 
     private static final EconomyResponse NO_ECONOMY =
@@ -57,8 +52,6 @@ public final class TrackedEconomy implements Economy {
         return r;
     }
 
-    // ───────── money in / out (tracked) ─────────
-
     @Override public EconomyResponse withdrawPlayer(String player, double amount) { return tracked(null, player, null, false, amount, e -> e.withdrawPlayer(player, amount)); }
     @Override public EconomyResponse withdrawPlayer(OfflinePlayer player, double amount) { return tracked(player, null, null, false, amount, e -> e.withdrawPlayer(player, amount)); }
     @Override public EconomyResponse withdrawPlayer(String player, String world, double amount) { return tracked(null, player, world, false, amount, e -> e.withdrawPlayer(player, world, amount)); }
@@ -67,8 +60,6 @@ public final class TrackedEconomy implements Economy {
     @Override public EconomyResponse depositPlayer(OfflinePlayer player, double amount) { return tracked(player, null, null, true, amount, e -> e.depositPlayer(player, amount)); }
     @Override public EconomyResponse depositPlayer(String player, String world, double amount) { return tracked(null, player, world, true, amount, e -> e.depositPlayer(player, world, amount)); }
     @Override public EconomyResponse depositPlayer(OfflinePlayer player, String world, double amount) { return tracked(player, null, world, true, amount, e -> e.depositPlayer(player, world, amount)); }
-
-    // ───────── pass-through ─────────
 
     @Override public boolean isEnabled() { Economy e = d(); return e != null && e.isEnabled(); }
     @Override public String getName() { Economy e = d(); return e == null ? "EconomyLogger (no economy)" : e.getName(); }

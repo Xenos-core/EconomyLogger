@@ -13,10 +13,6 @@ import org.bukkit.event.server.ServerCommandEvent;
 
 import java.util.UUID;
 
-/**
- * Remembers, per thread, what a player was doing right before a payment: a command or a menu click.
- * Only stores references; text is built lazily when a payment actually uses it.
- */
 public final class ContextTracker implements Listener {
 
     private static final class Ctx {
@@ -53,7 +49,6 @@ public final class ContextTracker implements Listener {
         c.nanos = System.nanoTime();
     }
 
-    // LOWEST: runs before the menu plugin's own click handler, which is where it charges the player.
     @EventHandler(priority = EventPriority.LOWEST)
     public void onClick(InventoryClickEvent e) {
         if (!plugin.settings().ctxMenus()) return;
@@ -65,7 +60,6 @@ public final class ContextTracker implements Listener {
         c.nanos = System.nanoTime();
     }
 
-    /** Context for a payment of {@code a} (or its counterpart {@code b}) happening right now on this thread. */
     public String context(UUID a, UUID b) {
         Ctx c = current.get();
         if (c.nanos == 0 || System.nanoTime() - c.nanos > plugin.settings().ctxWindowNanos()) return null;

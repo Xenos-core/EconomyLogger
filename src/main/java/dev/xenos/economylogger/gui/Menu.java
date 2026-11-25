@@ -11,7 +11,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-/** Base for all EconomyLogger menus. Every click inside is cancelled by {@link MenuListener}. */
 public abstract class Menu implements InventoryHolder {
 
     protected final EconomyLoggerPlugin plugin;
@@ -31,7 +30,6 @@ public abstract class Menu implements InventoryHolder {
 
     public abstract void click(int slot, ClickType type);
 
-    /** Fills the outer frame with alternating panes. */
     protected void border(String path) {
         if (!gui().bool(path + ".enabled", true)) return;
         List<String> mats = gui().list(path + ".materials");
@@ -58,7 +56,6 @@ public abstract class Menu implements InventoryHolder {
         return viewer.isOnline() && viewer.getOpenInventory().getTopInventory().getHolder(false) == this;
     }
 
-    /** Runs on the viewer's own thread (Folia safe). */
     protected void onViewer(Runnable r) {
         viewer.getScheduler().run(plugin, t -> r.run(), null);
     }

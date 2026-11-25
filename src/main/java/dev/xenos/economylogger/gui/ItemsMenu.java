@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-/** Shows the exact items that came in or went out with one payment. */
 public final class ItemsMenu extends Menu {
 
     private final LogMenu back;
